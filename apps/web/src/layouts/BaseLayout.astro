@@ -1,35 +1,37 @@
 ---
+import '@fontsource-variable/schibsted-grotesk';
 import '@/styles/global.css';
+import fontUrl from '@fontsource-variable/schibsted-grotesk/files/schibsted-grotesk-latin-wght-normal.woff2?url';
+import Seo from '@/components/Seo.astro';
+import { ANALYTICS_SLOT, THEME_COLOR } from '@/consts';
+import { toLocale } from '@/i18n/locales';
 
 interface Props {
   title: string;
   description: string;
+  path?: string;
+  image?: string;
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, path, image, noindex } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={toLocale(Astro.currentLocale)}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <meta name="color-scheme" content="dark light" />
+    <Seo title={title} description={description} path={path} image={image} noindex={noindex} />
+    <meta name="theme-color" content={THEME_COLOR} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+    <slot name="head" />
+    <Fragment set:html={ANALYTICS_SLOT} />
   </head>
   <body>
-    <main>
-      <slot />
-    </main>
+    <slot />
   </body>
 </html>
-
-<style>
-  main {
-    max-width: 46rem;
-    margin: 0 auto;
-    padding: 3rem 1rem 4rem;
-  }
-</style>

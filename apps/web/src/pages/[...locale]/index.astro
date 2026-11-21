@@ -1,0 +1,58 @@
+---
+import masthead from '@/assets/masthead.jpg';
+import ListingPanel from '@/components/ListingPanel.astro';
+import Masthead from '@/components/Masthead.astro';
+import PackageList from '@/components/PackageList.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import type { GetStaticPathsResult } from 'astro';
+import { messagesFor } from '@/i18n';
+import { DEFAULT_LOCALE, LOCALES } from '@/i18n/locales';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+export function getStaticPaths(): GetStaticPathsResult {
+  return LOCALES.map((locale) => ({
+    params: { locale: locale === DEFAULT_LOCALE ? undefined : locale },
+  }));
+}
+
+const { page } = messagesFor(Astro.currentLocale);
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <link slot="head" rel="preload" as="image" href={masthead.src} fetchpriority="high" />
+  <Masthead />
+  <main class="container">
+    <div class="panel"><ListingPanel /></div>
+    <div class="packages"><PackageList /></div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<script>
+  import '@/scripts/package-selector';
+</script>
+
+<style>
+  main {
+    display: grid;
+    gap: var(--space-xl);
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  @media (min-width: 60rem) {
+    main {
+      grid-template-columns: minmax(0, 1fr) var(--panel-width);
+      align-items: start;
+    }
+
+    .packages {
+      grid-area: 1 / 1;
+    }
+
+    .panel {
+      position: sticky;
+      top: var(--space-lg);
+      grid-area: 1 / 2;
+    }
+  }
+</style>

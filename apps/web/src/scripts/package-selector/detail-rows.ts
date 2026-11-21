@@ -2,6 +2,7 @@ import { authorName, requirements, textField } from '@/lib/vpm/manifest';
 import type { Manifest } from '@/lib/vpm/types';
 import { webUrl } from '@/lib/vpm/urls';
 import { createLink } from './dom';
+import { messages } from './messages';
 
 type DetailValue = string | HTMLAnchorElement | undefined;
 
@@ -12,12 +13,10 @@ function linkField(manifest: Manifest, key: string, text: string): HTMLAnchorEle
 
 function detailValues(manifest: Manifest): [string, DetailValue][] {
   return [
-    ['Unity', textField(manifest, 'unity')],
-    ['Author', authorName(manifest)],
-    ['License', textField(manifest, 'license')],
-    ['Requires', requirements(manifest).join('\n')],
-    ['Changelog', linkField(manifest, 'changelogUrl', 'Release notes')],
-    ['Docs', linkField(manifest, 'documentationUrl', 'Documentation')],
+    [messages.author, authorName(manifest)],
+    [messages.requires, requirements(manifest).join('\n')],
+    [messages.changelog, linkField(manifest, 'changelogUrl', messages.releaseNotes)],
+    [messages.docs, linkField(manifest, 'documentationUrl', messages.documentation)],
   ];
 }
 

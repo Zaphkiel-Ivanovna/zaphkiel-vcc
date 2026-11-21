@@ -1,23 +1,90 @@
-<ul id="packages"></ul>
+---
+import { PACKAGES_SLOT } from '@/consts';
+import { messagesFor } from '@/i18n';
+
+const { page, client } = messagesFor(Astro.currentLocale);
+---
+
+<section aria-labelledby="packages-heading">
+  <div class="head">
+    <h2 id="packages-heading">{page.packagesHeading}</h2>
+    <button id="toggle" type="button" class="button-text" hidden>{client.deselectAll}</button>
+  </div>
+
+  <div id="filter-field" class="filter" hidden>
+    <label for="filter">{page.filterLabel}</label>
+    <input id="filter" type="search" autocomplete="off" spellcheck="false" />
+  </div>
+
+  <ul id="packages"></ul>
+  <p id="no-match" role="status" hidden></p>
+
+  <noscript>
+    <p>
+      {page.noScriptBefore}<a href="/index.json">{page.noScriptLink}</a>{page.noScriptAfter}
+    </p>
+    <ul class="fallback"><Fragment set:html={PACKAGES_SLOT} /></ul>
+  </noscript>
+</section>
 
 <template id="package">
-  <li class="card">
+  <li class="package">
     <label>
       <input type="checkbox" checked />
-      <span class="name"></span>
+      <span class="title">
+        <span class="name"></span>
+        <code class="id"></code>
+      </span>
       <span class="version"></span>
     </label>
-    <code class="id"></code>
-    <p class="description"></p>
-    <dl></dl>
-    <details>
-      <summary></summary>
-      <ul class="versions"></ul>
-    </details>
+    <div class="body">
+      <p class="description"></p>
+      <p class="meta"></p>
+      <p class="prerelease"></p>
+      <details>
+        <summary>{page.details}</summary>
+        <a class="page-link">{page.packagePage}</a>
+        <dl></dl>
+        <h3>{page.allVersions}</h3>
+        <ul class="versions"></ul>
+      </details>
+    </div>
   </li>
 </template>
 
 <style>
+  .head {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .filter label {
+    display: block;
+    margin-bottom: var(--space-2xs);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  .filter input {
+    width: 100%;
+    height: var(--control-height);
+    padding: 0 var(--space-sm);
+    font: var(--text-base) / 1 var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+  }
+
   ul {
     margin: 0;
     padding: 0;
@@ -25,72 +92,168 @@
   }
 
   #packages {
+    margin-top: var(--space-md);
+    border-top: var(--rule);
+  }
+
+  .package {
+    --box: 1.5rem;
+    --indent: calc(var(--box) + var(--space-md));
+    padding-block: var(--space-md) var(--space-lg);
+    border-bottom: var(--rule);
+  }
+
+  .package :focus-visible {
+    scroll-margin-block: var(--space-xl);
+  }
+
+  .package label {
     display: grid;
-    gap: 0.75rem;
-  }
-
-  .card {
-    padding: 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-  }
-
-  .card:has(input:checked) {
-    border-color: var(--accent);
-  }
-
-  label {
-    display: flex;
-    gap: 0.625rem;
+    grid-template-columns: var(--box) minmax(0, 1fr) auto;
+    gap: var(--space-md);
     align-items: center;
+    min-height: var(--control-height);
     cursor: pointer;
   }
 
-  input {
-    width: 1.125rem;
-    height: 1.125rem;
-    accent-color: var(--accent);
+  .package input {
+    display: grid;
+    place-items: center;
+    width: var(--box);
+    height: var(--box);
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    border: 2px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+
+  .package input:hover {
+    border-color: var(--color-ink);
+  }
+
+  .package input:checked {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+  }
+
+  .package input:checked::after {
+    content: '';
+    width: 0.4rem;
+    height: 0.75rem;
+    margin-top: -0.15rem;
+    border: solid var(--color-paper);
+    border-width: 0 0.2rem 0.2rem 0;
+    transform: rotate(45deg);
+  }
+
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-sm);
+    align-items: baseline;
   }
 
   .name {
-    font-weight: 600;
-  }
-
-  .version {
-    margin-left: auto;
-    padding: 0.125rem 0.5rem;
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
-    border: 1px solid var(--border);
-    border-radius: 1rem;
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
   }
 
   .id,
-  .description,
-  summary,
-  dl :global(dt) {
-    color: var(--muted);
+  .version,
+  .meta {
+    font: var(--text-xs) / 1.5 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-2);
   }
 
   .id {
-    font-size: 0.8125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .version {
+    padding: var(--space-2xs) var(--space-xs);
+    color: var(--color-ink);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+  }
+
+  .package:has(input:not(:checked)) :is(.name, .description, .version) {
+    color: var(--color-ink-2);
+  }
+
+  .body {
+    margin-left: var(--indent);
+  }
+
+  .body p {
+    margin: 0;
   }
 
   .description {
-    margin: 0.5rem 0 0;
+    max-width: 62ch;
   }
 
-  .description:empty {
+  .meta {
+    margin-top: var(--space-xs);
+  }
+
+  .prerelease {
+    margin-top: var(--space-2xs);
+    font: var(--text-xs) / 1.5 var(--font-mono);
+    color: var(--color-accent-ink);
+  }
+
+  :is(.description, .prerelease):empty {
     display: none;
+  }
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-height);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent-ink);
+    cursor: pointer;
+  }
+
+  summary::before {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-right: var(--space-xs);
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(-45deg);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+
+  details[open] > summary::before {
+    transform: rotate(45deg);
+  }
+
+  summary:hover {
+    color: var(--color-ink);
   }
 
   dl {
     display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.25rem 1rem;
-    margin: 0.75rem 0;
-    font-size: 0.875rem;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: var(--space-2xs) var(--space-lg);
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  dl :global(dt) {
+    color: var(--color-ink-2);
   }
 
   dl :global(dd) {
@@ -99,17 +262,44 @@
     overflow-wrap: anywhere;
   }
 
-  summary {
-    font-size: 0.875rem;
-    cursor: pointer;
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-height);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  h3 {
+    margin: var(--space-md) 0 var(--space-xs);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-ink-2);
   }
 
   .versions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 0.875rem;
-    margin-top: 0.5rem;
-    font-size: 0.875rem;
+    gap: var(--space-2xs) var(--space-md);
+    max-height: 9rem;
+    overflow-y: auto;
+    font: var(--text-xs) / 2 var(--font-mono);
     font-variant-numeric: tabular-nums;
+  }
+
+  #no-match,
+  noscript p {
+    margin: var(--space-lg) 0 0;
+    color: var(--color-ink-2);
+  }
+
+  .filter {
+    margin-top: var(--space-md);
+  }
+
+  @media (max-width: 34rem) {
+    .package {
+      --indent: 0rem;
+    }
   }
 </style>

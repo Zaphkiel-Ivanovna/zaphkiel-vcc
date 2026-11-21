@@ -1,0 +1,53 @@
+---
+import BrandMark from '@/components/BrandMark.astro';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { SITE_TITLE } from '@/consts';
+import { localePath, toLocale } from '@/i18n/locales';
+
+interface Props {
+  path: string;
+}
+
+const { path } = Astro.props;
+const home = localePath(toLocale(Astro.currentLocale));
+---
+
+<header>
+  <div class="container">
+    <a class="brand" href={home}>
+      <span class="mark"><BrandMark /></span>
+      {SITE_TITLE}
+    </a>
+    <LanguageSwitcher path={path} />
+  </div>
+</header>
+
+<style>
+  header {
+    border-bottom: var(--rule);
+  }
+
+  .container {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-sm);
+  }
+
+  .brand {
+    display: inline-flex;
+    gap: var(--space-sm);
+    align-items: center;
+    min-height: var(--control-height);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .mark {
+    width: 2.25rem;
+  }
+</style>

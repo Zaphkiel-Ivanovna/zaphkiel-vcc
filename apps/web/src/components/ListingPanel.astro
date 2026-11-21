@@ -1,0 +1,165 @@
+---
+import { messagesFor } from '@/i18n';
+
+const { page, client } = messagesFor(Astro.currentLocale);
+---
+
+<section aria-labelledby="listing-heading">
+  <h2 id="listing-heading">{page.listingHeading}</h2>
+  <p id="summary" role="status">{client.loading}</p>
+  <button id="retry" type="button" class="button-text" hidden>{page.retry}</button>
+  <ul id="selected" aria-label={page.selectedLabel}></ul>
+
+  <label for="url">{page.urlLabel}</label>
+  <input id="url" type="text" readonly spellcheck="false" />
+  <div class="actions">
+    <a id="add" class="button button-primary">{page.addToVcc}</a>
+    <button id="copy" type="button" class="button">{client.copy}</button>
+  </div>
+
+  <h3>{page.howToHeading}</h3>
+  <ol>
+    {page.howToSteps.map((step) => <li>{step}</li>)}
+  </ol>
+  <p class="help">{page.howToHelp}</p>
+</section>
+
+<style>
+  section {
+    padding: var(--space-lg);
+    background: var(--color-paper-2);
+    border: var(--rule);
+    border-radius: var(--radius-md);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  #summary {
+    margin: var(--space-2xs) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  #selected {
+    display: grid;
+    gap: var(--space-2xs);
+    max-height: 17rem;
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+  }
+
+  #selected:empty {
+    display: none;
+  }
+
+  @media (max-width: 59.99rem) {
+    #selected {
+      display: none;
+    }
+  }
+
+  #selected :global(li) {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    justify-content: space-between;
+    padding-left: var(--space-sm);
+    font-size: var(--text-sm);
+    background: var(--color-paper);
+    border-radius: var(--radius-sm);
+  }
+
+  #selected :global(button) {
+    flex: none;
+    width: var(--control-height);
+    height: var(--control-height);
+    font: var(--text-lg) / 1 var(--font-sans);
+    color: var(--color-ink-2);
+    background: none;
+    border: 0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  #selected :global(button:hover) {
+    color: var(--color-ink);
+    background: var(--color-rule);
+  }
+
+  label {
+    display: block;
+    margin: var(--space-lg) 0 var(--space-2xs);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  input {
+    width: 100%;
+    height: var(--control-height);
+    padding: 0 var(--space-sm);
+    font: var(--text-sm) / 1 var(--font-mono);
+    color: var(--color-ink);
+    background: var(--color-paper);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+  }
+
+  h3 {
+    margin: var(--space-lg) 0 var(--space-sm);
+    padding-top: var(--space-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-ink-2);
+    border-top: var(--rule);
+  }
+
+  ol {
+    display: grid;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-sm);
+    list-style: none;
+    counter-reset: step;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: var(--space-sm);
+    counter-increment: step;
+  }
+
+  li::before {
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-paper);
+    background: var(--color-ink);
+    border-radius: var(--radius-sm);
+  }
+
+  .help {
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+</style>

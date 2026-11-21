@@ -1,3 +1,12 @@
-export const SITE_TITLE = 'Zaphkiel VCC';
-export const SITE_DESCRIPTION =
-  'VRChat Creator Companion listing for Zaphkiel packages. Pick the packages you want and add them to VCC.';
+export const SITE_TITLE = 'VCC Listing';
+export const SITE_AUTHOR = 'Zaphkiel';
+export const AUTHOR_URL = 'https://github.com/Zaphkiel-Ivanovna';
+export const THEME_COLOR = '#0e0e17';
+export const SOCIAL_IMAGE = { height: 630, path: '/og.png', width: 1200 };
+export const STRUCTURED_DATA_SLOT = '<!--vcc:structured-data-->';
+export const ANALYTICS_SLOT = '<!--vcc:analytics-->';
+export const PACKAGES_SLOT = '<!--vcc:packages-->';
+export const PACKAGE_README_SLOT = '<!--vcc:package-readme-->';
+export const PACKAGE_VERSIONS_SLOT = '<!--vcc:package-versions-->';
+export const PACKAGE_PATH = 'packages/%%id%%/';
+export const REPOSITORY_URL = 'https://github.com/Zaphkiel-Ivanovna/zaphkiel-vcc';

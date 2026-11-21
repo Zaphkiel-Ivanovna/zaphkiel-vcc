@@ -1,0 +1,122 @@
+---
+import french from '@/assets/flags/fr.svg';
+import british from '@/assets/flags/gb.svg';
+import { messagesFor } from '@/i18n';
+import { LOCALES, LOCALE_NAMES, localePath, toLocale } from '@/i18n/locales';
+
+const FLAGS = { en: british, fr: french };
+
+interface Props {
+  path?: string;
+}
+
+const { path = '' } = Astro.props;
+const current = toLocale(Astro.currentLocale);
+const { page } = messagesFor(current);
+---
+
+<nav aria-label={page.language}>
+  <details data-language-switcher>
+    <summary>
+      <img src={FLAGS[current].src} alt="" width="24" height="16" />
+      {LOCALE_NAMES[current]}
+    </summary>
+    <ul>
+      {
+        LOCALES.map((locale) => (
+          <li>
+            <a
+              href={`${localePath(locale)}${path}`}
+              lang={locale}
+              hreflang={locale}
+              aria-current={locale === current ? 'page' : undefined}
+            >
+              <img src={FLAGS[locale].src} alt="" width="24" height="16" />
+              {LOCALE_NAMES[locale]}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</nav>
+
+<script>
+  import { setUpLanguageSwitcher } from '@/scripts/language-switcher';
+
+  setUpLanguageSwitcher();
+</script>
+
+<style>
+  details {
+    position: relative;
+  }
+
+  summary,
+  a {
+    display: flex;
+    gap: var(--space-xs);
+    align-items: center;
+    min-height: var(--control-height);
+    padding-inline: var(--space-sm);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-ink);
+    border-radius: var(--radius-sm);
+  }
+
+  summary {
+    list-style: none;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-edge);
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: '';
+    width: 0.4rem;
+    height: 0.4rem;
+    margin: -0.2rem 0 0 var(--space-2xs);
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  summary:hover {
+    border-color: var(--color-ink);
+  }
+
+  img {
+    flex: none;
+    border-radius: 2px;
+    outline: 1px solid var(--color-rule);
+  }
+
+  ul {
+    position: absolute;
+    top: calc(100% + var(--space-2xs));
+    right: 0;
+    z-index: 2;
+    min-width: 100%;
+    margin: 0;
+    padding: var(--space-2xs);
+    list-style: none;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-md);
+  }
+
+  a {
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  a:hover,
+  a[aria-current] {
+    background: var(--color-rule);
+  }
+</style>

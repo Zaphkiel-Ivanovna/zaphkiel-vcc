@@ -1,0 +1,12 @@
+{
+  "name": "VCC Listing by Zaphkiel",
+  "short_name": "VCC Listing",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0e0e17",
+  "theme_color": "#0e0e17",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

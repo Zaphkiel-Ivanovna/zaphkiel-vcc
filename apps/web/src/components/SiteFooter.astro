@@ -1,0 +1,26 @@
+---
+import { REPOSITORY_URL } from '@/consts';
+import { messagesFor } from '@/i18n';
+
+const { page } = messagesFor(Astro.currentLocale);
+---
+
+<footer>
+  <p class="container">
+    {page.footerNote}
+    <a href={REPOSITORY_URL}>{page.footerSource}</a>
+  </p>
+</footer>
+
+<style>
+  footer {
+    padding-block: var(--space-lg);
+    border-top: var(--rule);
+  }
+
+  p {
+    margin-block: 0;
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+</style>

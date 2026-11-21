@@ -1,0 +1,64 @@
+---
+import { SITE_TITLE, SOCIAL_IMAGE, STRUCTURED_DATA_SLOT } from '@/consts';
+import { messagesFor } from '@/i18n';
+import { DEFAULT_LOCALE, LOCALES, localePath, toLocale } from '@/i18n/locales';
+import { pageStructuredData } from '@/lib/structured-data';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const { title, description, path = '', image, noindex = false } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const { page } = messagesFor(locale);
+const site = new URL('/', Astro.site).href;
+
+function pageUrl(target: (typeof LOCALES)[number]): string {
+  return `${site}${localePath(target).slice(1)}${path}`;
+}
+
+const url = pageUrl(locale);
+const socialImage = image ?? `${site}${SOCIAL_IMAGE.path.slice(1)}`;
+const otherLocales = LOCALES.filter((other) => other !== locale);
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={noindex ? 'noindex' : 'index, follow, max-image-preview:large'} />
+{
+  !noindex && (
+    <>
+      <link rel="canonical" href={url} />
+      {LOCALES.map((other) => <link rel="alternate" hreflang={other} href={pageUrl(other)} />)}
+      <link rel="alternate" hreflang="x-default" href={pageUrl(DEFAULT_LOCALE)} />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content={SITE_TITLE} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={url} />
+      <meta property="og:locale" content={locale} />
+      {otherLocales.map((other) => <meta property="og:locale:alternate" content={other} />)}
+      <meta property="og:image" content={socialImage} />
+      {image === undefined && <meta property="og:image:width" content={String(SOCIAL_IMAGE.width)} />}
+      {image === undefined && <meta property="og:image:height" content={String(SOCIAL_IMAGE.height)} />}
+      <meta property="og:image:alt" content={image === undefined ? page.socialImageAlt : title} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={socialImage} />
+      {
+        path === '' && (
+          <script
+            type="application/ld+json"
+            set:html={pageStructuredData({ description, locale, site, title, url })}
+          />
+        )
+      }
+      <Fragment set:html={STRUCTURED_DATA_SLOT} />
+    </>
+  )
+}

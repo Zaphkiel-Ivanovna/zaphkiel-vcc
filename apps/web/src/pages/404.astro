@@ -1,0 +1,33 @@
+---
+import { messagesFor } from '@/i18n';
+import { DEFAULT_LOCALE, localePath } from '@/i18n/locales';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const { page } = messagesFor(DEFAULT_LOCALE);
+---
+
+<BaseLayout title={page.notFoundHeading} description={page.notFoundText} noindex>
+  <main class="container">
+    <h1>{page.notFoundHeading}</h1>
+    <p>{page.notFoundText}</p>
+    <a class="button button-primary" href={localePath(DEFAULT_LOCALE)}>{page.notFoundLink}</a>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    padding-block: var(--space-2xl);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--text-display);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    margin: var(--space-md) 0 var(--space-lg);
+    color: var(--color-ink-2);
+  }
+</style>

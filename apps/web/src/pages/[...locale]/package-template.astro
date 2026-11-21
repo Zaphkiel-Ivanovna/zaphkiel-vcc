@@ -1,0 +1,264 @@
+---
+import type { GetStaticPathsResult } from 'astro';
+import '@/styles/prose.css';
+import SiteBar from '@/components/SiteBar.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import { PACKAGE_PATH, PACKAGE_README_SLOT, PACKAGE_VERSIONS_SLOT } from '@/consts';
+import { messagesFor } from '@/i18n';
+import { format } from '@/i18n/format';
+import { DEFAULT_LOCALE, LOCALES, localePath, toLocale } from '@/i18n/locales';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+export function getStaticPaths(): GetStaticPathsResult {
+  return LOCALES.map((locale) => ({
+    params: { locale: locale === DEFAULT_LOCALE ? undefined : locale },
+  }));
+}
+
+const { page } = messagesFor(Astro.currentLocale);
+const home = localePath(toLocale(Astro.currentLocale));
+const details = [
+  [page.unity, '%%unity%%'],
+  [page.license, '%%license%%'],
+  [page.packageAuthor, '%%author%%'],
+  [page.requires, '%%requires%%'],
+];
+---
+
+<BaseLayout
+  title={format(page.packageTitle, { name: '%%name%%' })}
+  description="%%description%%"
+  path={PACKAGE_PATH}
+  image="%%image%%"
+>
+  <SiteBar path={PACKAGE_PATH} />
+  <main class="container" data-package-id="%%id%%">
+    <a class="back" href={home}>{page.allPackages}</a>
+    <div class="heading">
+      <h1>%%name%%</h1>
+      <span class="version">%%version%%</span>
+    </div>
+    <p class="id"><code>%%id%%</code></p>
+    <p class="description">%%description%%</p>
+
+    <div class="layout">
+      <div class="prose"><Fragment set:html={PACKAGE_README_SLOT} /></div>
+
+      <aside aria-labelledby="about-heading">
+        <a class="button button-primary" href="%%add-all-url%%" data-add-scope="all">{page.addAllToVcc}</a>
+        <a class="button" href="%%add-url%%" data-add-scope="single">{page.addOnlyThisPackage}</a>
+        <label for="listing-url">{page.urlLabel}</label>
+        <input id="listing-url" type="text" readonly value="%%all-listing-url%%" spellcheck="false" />
+
+        <h2 id="about-heading">{page.aboutHeading}</h2>
+        <dl>
+          {
+            details.map(([term, value]) => (
+              <div>
+                <dt>{term}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <ul class="links">
+          <li><a href="%%repository%%">{page.repository}</a></li>
+          <li><a href="%%download%%">{format(page.download, { version: '%%version%%' })}</a></li>
+        </ul>
+
+        <h2>{page.allVersions}</h2>
+        <ul class="versions"><Fragment set:html={PACKAGE_VERSIONS_SLOT} /></ul>
+      </aside>
+    </div>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+<script>
+  import { setUpPackagePage } from '@/scripts/package-page';
+
+  setUpPackagePage();
+</script>
+
+<style>
+  main {
+    padding-block: var(--space-lg) var(--space-2xl);
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-height);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .heading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    align-items: center;
+    margin-top: var(--space-sm);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--text-display);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+  }
+
+  .version,
+  .id,
+  .versions {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .version {
+    padding: var(--space-2xs) var(--space-xs);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+  }
+
+  .id {
+    margin: var(--space-sm) 0 0;
+    color: var(--color-ink-2);
+    overflow-wrap: anywhere;
+  }
+
+  .description {
+    max-width: 62ch;
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-lg);
+  }
+
+  .layout {
+    display: grid;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+  }
+
+  .prose:empty {
+    display: none;
+  }
+
+  aside {
+    padding: var(--space-lg);
+    background: var(--color-paper-2);
+    border: var(--rule);
+    border-radius: var(--radius-md);
+  }
+
+  aside .button {
+    width: 100%;
+  }
+
+  aside .button + .button {
+    margin-top: var(--space-xs);
+  }
+
+  label {
+    display: block;
+    margin: var(--space-md) 0 var(--space-2xs);
+    font-size: var(--text-sm);
+    color: var(--color-ink-2);
+  }
+
+  input {
+    width: 100%;
+    height: var(--control-height);
+    padding: 0 var(--space-sm);
+    font: var(--text-sm) / 1 var(--font-mono);
+    color: var(--color-ink);
+    background: var(--color-paper);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-sm);
+  }
+
+  h2 {
+    margin: var(--space-lg) 0 var(--space-sm);
+    padding-top: var(--space-lg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-ink-2);
+    border-top: var(--rule);
+  }
+
+  dl {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  dl div {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+  dl div:has(dd:empty),
+  .links li:has(a[href='']) {
+    display: none;
+  }
+
+  dt {
+    color: var(--color-ink-2);
+  }
+
+  dd {
+    margin: 0;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .links {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-top: var(--space-md);
+    font-size: var(--text-sm);
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--control-height);
+  }
+
+  .versions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    max-height: 12rem;
+    overflow-y: auto;
+    line-height: 2;
+  }
+
+  @media (max-width: 59.99rem) {
+    aside {
+      order: -1;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) var(--panel-width);
+      align-items: start;
+    }
+
+    aside {
+      position: sticky;
+      top: var(--space-lg);
+    }
+  }
+</style>
