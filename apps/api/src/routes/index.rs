@@ -4,7 +4,7 @@ use axum::{
     body::Bytes,
     extract::{Query, State},
     http::{
-        HeaderMap, HeaderValue, StatusCode,
+        HeaderMap, HeaderName, HeaderValue, StatusCode,
         header::{
             ACCESS_CONTROL_ALLOW_ORIGIN, CACHE_CONTROL, CONTENT_ENCODING, CONTENT_TYPE, ETAG,
             IF_NONE_MATCH, VARY,
@@ -17,6 +17,7 @@ use serde::Deserialize;
 use crate::state::AppState;
 
 const CACHE: &str = "public, max-age=60";
+const X_ROBOTS_TAG: HeaderName = HeaderName::from_static("x-robots-tag");
 
 #[derive(Deserialize)]
 pub(super) struct Params {
@@ -72,6 +73,7 @@ fn respond(listing: &Listing, request_headers: &HeaderMap) -> Response {
         (CACHE_CONTROL, CACHE),
         (VARY, "accept-encoding"),
         (ACCESS_CONTROL_ALLOW_ORIGIN, "*"),
+        (X_ROBOTS_TAG, "noindex"),
     ];
     let is_cached = request_headers
         .get(IF_NONE_MATCH)

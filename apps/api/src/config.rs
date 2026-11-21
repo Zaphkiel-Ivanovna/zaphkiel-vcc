@@ -15,6 +15,7 @@ pub(crate) struct ListingConfig {
     pub(crate) author: String,
     pub(crate) id: String,
     pub(crate) public_url: String,
+    pub(crate) analytics_script_url: Option<String>,
 }
 
 impl Config {
@@ -39,6 +40,7 @@ impl Config {
                 public_url: var("PUBLIC_URL", "https://vcc.zaphkiel.dev")
                     .trim_end_matches('/')
                     .to_owned(),
+                analytics_script_url: analytics_script_url()?,
             },
             refresh_period: Duration::from_secs(parsed("REFRESH_SECONDS", "300")?),
             port: parsed("PORT", "8080")?,
@@ -58,6 +60,17 @@ where
     var(key, default)
         .parse()
         .with_context(|| format!("{key} is not a valid number"))
+}
+
+fn analytics_script_url() -> Result<Option<String>> {
+    let url = env::var("RYBBIT_SCRIPT_URL")
+        .ok()
+        .filter(|url| !url.is_empty());
+    ensure!(
+        url.as_deref().is_none_or(|url| url.starts_with("https://")),
+        "RYBBIT_SCRIPT_URL must be an https URL"
+    );
+    Ok(url)
 }
 
 fn repo_slug(link: &str) -> Result<String> {

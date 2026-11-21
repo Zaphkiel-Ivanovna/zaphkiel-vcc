@@ -22,6 +22,20 @@ pub(super) struct Package<'a> {
     versions: BTreeMap<Reverse<Version>, &'a Manifest>,
 }
 
+impl<'a> Package<'a> {
+    pub(super) fn latest(&self) -> Option<&'a Manifest> {
+        self.versions
+            .iter()
+            .find(|(version, _)| version.0.pre.is_empty())
+            .or_else(|| self.versions.iter().next())
+            .map(|(_, manifest)| *manifest)
+    }
+
+    pub(super) fn manifests(&self) -> impl Iterator<Item = &'a Manifest> {
+        self.versions.values().copied()
+    }
+}
+
 pub(super) fn group<'a>(
     manifests: impl Iterator<Item = &'a Manifest>,
 ) -> BTreeMap<&'a str, Package<'a>> {

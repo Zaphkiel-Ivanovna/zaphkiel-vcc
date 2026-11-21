@@ -1,6 +1,8 @@
 mod config;
+mod embedded;
 mod github;
 mod listing;
+mod pages;
 mod refresh;
 mod routes;
 mod shutdown;

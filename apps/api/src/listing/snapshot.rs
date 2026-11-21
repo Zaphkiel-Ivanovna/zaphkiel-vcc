@@ -7,12 +7,14 @@ use super::{
     document::{self, Document, RawPackages},
     encoded::Encoded,
     hash::fnv1a,
+    views,
 };
-use crate::{config::ListingConfig, github::Manifest};
+use crate::{config::ListingConfig, github::Repo, pages::Pages};
 
 pub(crate) struct Snapshot {
     pub(crate) hash: u64,
     pub(crate) full: Encoded,
+    pub(crate) pages: Pages,
     packages: BTreeMap<String, Box<RawValue>>,
 }
 
@@ -22,11 +24,10 @@ pub(crate) struct Selection {
 }
 
 impl Snapshot {
-    pub(crate) fn build<'a>(
-        config: &ListingConfig,
-        manifests: impl Iterator<Item = &'a Manifest>,
-    ) -> Result<Self> {
-        let packages = document::group(manifests)
+    pub(crate) fn build(config: &ListingConfig, repos: &[Repo]) -> Result<Self> {
+        let groups = document::group(repos.iter().flat_map(|repo| &repo.manifests));
+        let views = views::build(&groups, repos);
+        let packages = groups
             .iter()
             .map(|(name, package)| Ok(((*name).to_owned(), to_raw_value(package)?)))
             .collect::<serde_json::Result<BTreeMap<_, _>>>()?;
@@ -40,6 +41,7 @@ impl Snapshot {
         Ok(Self {
             hash: fnv1a(&body),
             full: Encoded::new(body)?,
+            pages: Pages::render(config, &views)?,
             packages,
         })
     }

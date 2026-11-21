@@ -12,8 +12,7 @@ use crate::{
 };
 
 pub(crate) fn snapshot(config: &ListingConfig, repos: &[Repo]) -> Result<Arc<Snapshot>> {
-    let manifests = repos.iter().flat_map(|repo| &repo.manifests);
-    block_in_place(|| Snapshot::build(config, manifests)).map(Arc::new)
+    block_in_place(|| Snapshot::build(config, repos)).map(Arc::new)
 }
 
 pub(crate) async fn sync(github: &GitHub, repos: &mut [Repo]) -> bool {
