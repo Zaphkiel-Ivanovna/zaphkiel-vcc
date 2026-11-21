@@ -1,0 +1,8 @@
+services:
+  vcc:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    read_only: true
+    ports:
+      - '8080:8080'
