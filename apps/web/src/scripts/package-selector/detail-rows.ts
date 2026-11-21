@@ -1,11 +1,12 @@
 import { authorName, requirements, textField } from '@/lib/vpm/manifest';
 import type { Manifest } from '@/lib/vpm/types';
+import { webUrl } from '@/lib/vpm/urls';
 import { createLink } from './dom';
 
 type DetailValue = string | HTMLAnchorElement | undefined;
 
 function linkField(manifest: Manifest, key: string, text: string): HTMLAnchorElement | undefined {
-  const href = textField(manifest, key);
+  const href = webUrl(textField(manifest, key));
   return href === undefined ? undefined : createLink(text, href);
 }
 

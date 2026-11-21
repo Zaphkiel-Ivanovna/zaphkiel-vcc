@@ -12,10 +12,12 @@ export function requireElement<Target extends Element>(
   return element;
 }
 
-export function createLink(text: string, href: string): HTMLAnchorElement {
+export function createLink(text: string, href: string | undefined): HTMLAnchorElement {
   const anchor = document.createElement('a');
   anchor.textContent = text;
-  anchor.href = href;
-  anchor.rel = 'noopener';
+  if (href !== undefined) {
+    anchor.href = href;
+    anchor.rel = 'noopener';
+  }
   return anchor;
 }

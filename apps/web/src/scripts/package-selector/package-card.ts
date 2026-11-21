@@ -1,5 +1,6 @@
 import { textField } from '@/lib/vpm/manifest';
 import type { Manifest, Versions } from '@/lib/vpm/types';
+import { webUrl } from '@/lib/vpm/urls';
 import { latestVersion } from '@/lib/vpm/versions';
 import { detailRows } from './detail-rows';
 import { createLink, requireElement } from './dom';
@@ -27,7 +28,8 @@ function fillIdentity(card: DocumentFragment, { id, latest, manifest }: CardIden
 function fillVersions(card: DocumentFragment, versions: Versions): void {
   const links = Object.entries(versions).map(([version, manifest]) => {
     const item = document.createElement('li');
-    item.append(createLink(version, textField(manifest, 'url') ?? '#'));
+    const downloadUrl = webUrl(textField(manifest, 'url'));
+    item.append(createLink(version, downloadUrl));
     return item;
   });
   setText(card, 'summary', links.length === 1 ? '1 version' : `${links.length} versions`);
