@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          name=$(jq -r .name package.json)
+          version=$(jq -r .version package.json)
+          zip -r "$RUNNER_TEMP/$name-$version.zip" . -x '.git/*' '.github/*'
+          gh release create "$version" "$RUNNER_TEMP/$name-$version.zip" package.json --generate-notes
