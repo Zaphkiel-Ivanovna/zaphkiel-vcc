@@ -1,0 +1,95 @@
+<section aria-label="Listing URL">
+  <div class="url">
+    <input id="url" type="text" readonly aria-label="Listing URL" />
+    <button id="copy" type="button">
+      Copy
+    </button>
+    <a id="add" class="primary">
+      Add to VCC
+    </a>
+  </div>
+  <div class="status">
+    <p id="summary" role="status">
+      Loading packages…
+    </p>
+    <button id="toggle" type="button" class="link" hidden>
+      Deselect all
+    </button>
+  </div>
+</section>
+
+<style>
+  section {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    margin: 2rem 0 1rem;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+  }
+
+  .url,
+  .status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .status {
+    justify-content: space-between;
+    margin-top: 0.75rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  input {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font-family: ui-monospace, monospace;
+  }
+
+  input,
+  button,
+  .primary {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    color: inherit;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
+
+  button,
+  .primary {
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .primary {
+    color: var(--on-accent);
+    background: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  button:disabled,
+  .primary:not([href]) {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .link {
+    padding: 0;
+    color: var(--accent);
+    background: none;
+    border: 0;
+  }
+</style>

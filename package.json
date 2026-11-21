@@ -1,0 +1,22 @@
+{
+  "name": "zaphkiel-vcc",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "bun run --filter @zaphkiel-vcc/web dev",
+    "build": "bun run --filter @zaphkiel-vcc/web build",
+    "check": "bun run --filter @zaphkiel-vcc/web check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "oxfmt": "0.79.0",
+    "oxlint": "1.94.0",
+    "oxlint-tsgolint": "7.0.2008"
+  },
+  "packageManager": "bun@1.4.4"
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "import", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "style": "error",
+    "restriction": "error"
+  },
+  "options": {
+    "typeAware": true,
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "error"
+  },
+  "rules": {
+    "eslint/complexity": [
+      "error",
+      {
+        "max": 8
+      }
+    ],
+    "eslint/func-style": ["error", "declaration"],
+    "eslint/max-depth": [
+      "error",
+      {
+        "max": 3
+      }
+    ],
+    "eslint/max-lines": [
+      "error",
+      {
+        "max": 150,
+        "skipBlankLines": true
+      }
+    ],
+    "eslint/max-lines-per-function": [
+      "error",
+      {
+        "max": 40,
+        "skipBlankLines": true
+      }
+    ],
+    "eslint/max-params": [
+      "error",
+      {
+        "max": 3
+      }
+    ],
+    "eslint/no-magic-numbers": [
+      "error",
+      {
+        "ignore": [0, 1]
+      }
+    ],
+    "eslint/no-ternary": "off",
+    "eslint/no-undefined": "off",
+    "eslint/no-void": [
+      "error",
+      {
+        "allowAsStatement": true
+      }
+    ],
+    "eslint/one-var": ["error", "never"],
+    "eslint/sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "import/exports-last": "off",
+    "import/group-exports": "off",
+    "import/no-named-export": "off",
+    "import/prefer-default-export": "off",
+    "oxc/no-async-await": "off",
+    "typescript/prefer-readonly-parameter-types": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.config.mjs"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      "files": ["**/*.astro"],
+      "rules": {
+        "unicorn/filename-case": [
+          "error",
+          {
+            "cases": {
+              "kebabCase": true,
+              "pascalCase": true
+            }
+          }
+        ],
+        "import/no-unassigned-import": [
+          "error",
+          {
+            "allow": ["**/*.css", "@/scripts/**"]
+          }
+        ]
+      }
+    }
+  ],
+  "ignorePatterns": ["dist", ".astro", "target"]
+}
