@@ -1,0 +1,23 @@
+# Production stack, deployed by Portainer GitOps from this file.
+# The image tag is bumped by the deploy job in .github/workflows/image.yml.
+# Variables come from the stack's environment in Portainer.
+services:
+  vcc:
+    image: ghcr.io/zaphkiel-ivanovna/zaphkiel-vcc:sha-5807f25
+    container_name: zaphkiel-vcc
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    environment:
+      REPOS: ${REPOS}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      LISTING_NAME: ${LISTING_NAME:-Zaphkiel VCC}
+      LISTING_AUTHOR: ${LISTING_AUTHOR:-Zaphkiel}
+      LISTING_ID: ${LISTING_ID:-dev.zaphkiel.vcc}
+      PUBLIC_URL: ${PUBLIC_URL:-https://vcc.zaphkiel.dev}
+      REFRESH_SECONDS: ${REFRESH_SECONDS:-300}
+      PORT: 8080
+      RYBBIT_SCRIPT_URL: ${RYBBIT_SCRIPT_URL:-}
+    ports:
+      - '127.0.0.1:3103:8080'

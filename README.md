@@ -24,6 +24,8 @@ docker compose up -d --build
 
 Set `REPOS` in `.env` before starting. The container listens on port 8080 and expects a reverse proxy in front of it for TLS.
 
+Production runs from `deploy/compose.yaml` through Portainer GitOps. After each image build on `main`, CI pins the new `sha-*` tag in that file, and Portainer redeploys when it sees the commit.
+
 ## Configuration
 
 | Variable            | Default                    | Description                                                                           |

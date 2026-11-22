@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+    paths-ignore: ['deploy/**']
   pull_request:
   workflow_dispatch:
 
@@ -44,3 +45,22 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: dedie
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Pin the new image in deploy/compose.yaml
+        run: |
+          tag="sha-${GITHUB_SHA::7}"
+          sed -i -E "s#(ghcr\.io/zaphkiel-ivanovna/zaphkiel-vcc:)sha-[0-9a-f]+#\1${tag}#" deploy/compose.yaml
+          git diff --quiet && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "deploy: ${tag} [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
