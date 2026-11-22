@@ -3,7 +3,7 @@
 # Variables come from the stack's environment in Portainer.
 services:
   vcc:
-    image: ghcr.io/zaphkiel-ivanovna/zaphkiel-vcc:sha-5807f25
+    image: ghcr.io/zaphkiel-ivanovna/zaphkiel-vcc:sha-c6430ca
     container_name: zaphkiel-vcc
     restart: unless-stopped
     read_only: true
